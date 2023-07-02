@@ -1,13 +1,23 @@
+%-------------------------------------------------------------------------------%
+% vim: ft=mercury ts=4 sw=4 et\n",
+%-------------------------------------------------------------------------------%
+%
 % Program: mercury_template.m
 % Author: William Stock
 % Purpose: To generate a template for a Mercury program
 % Date: 2023-06-30
+%
+%-------------------------------------------------------------------------------%
 :- module mercury_template.
-
 :- interface.
+
 :- import_module io.
+
+%-------------------------------------------------------------------------------%
+
 :- pred main(io::di, io::uo) is det.
 
+%-------------------------------------------------------------------------------%
 :- implementation.
 :- import_module bool.
 :- import_module char.
@@ -47,10 +57,10 @@ main(!IO) :-
             if getopt_io.lookup_bool_option(Options, help_flag, yes) then
                 usage(!IO)
             else if Args = [ModuleName] then
+                TM = time.gmtime(Time_t),
+                DateString = time.asctime(TM),
                 get_git_author_name(AuthorName, !IO),
                 time.time(Time_t, !IO),
-                DateString = time.asctime(TM),
-                TM = time.gmtime(Time_t),
                 create_template(ModuleName, AuthorName, DateString, !IO),
                 (
                     if getopt_io.lookup_bool_option(Options, makefile_flag, yes)
@@ -98,7 +108,8 @@ create_template(ModuleName, AuthorName, DateString, !IO) :-
                                  "     usage(!IO).\n\n",
                                  ":- pred usage(io::di, io::uo) is erroneous.\n",
                                  "usage(!IO) :-\n",
-                                 "    io.write_string(\"Usage: ", ModuleName, " <args>\", !IO), io.nl(!IO), die(!IO).\n\n",
+                                 "    UsageString = \"Usage: ", ModuleName, " <args>\", \n",
+                                 "    die(UsageString, !IO).\n\n",
                                  ":- pred die(string::in, io::di, io::uo) is erroneous.\n",
                                  "die(Error, !IO) :-\n",
                                  "    io.write_string(io.stderr_stream, Error, !IO),\n",
@@ -157,12 +168,11 @@ get_git_author_name(Author, !IO) :-
 :- pred usage(io::di, io::uo) is erroneous.
 
 usage(!IO) :-
-    io.write_string(
+    UsageString =
         "Usage: mercury_template [-mh] <module_name>\n" ++
         " -h, --help         display this message\n" ++
-        " -m, --makefile     create a makefile\n\n"
-        , !IO),
-    die(!IO).
+        " -m, --makefile     create a makefile\n\n",
+    die(UsageString, !IO).
 
 :- pred die(string::in, io::di, io::uo) is erroneous.
 die(Error, !IO) :-
@@ -176,3 +186,7 @@ die(Error, !IO) :-
 "
     exit(1);
 ").
+
+%-------------------------------------------------------------------------------%
+:- end_module mercury_template.
+%-------------------------------------------------------------------------------%

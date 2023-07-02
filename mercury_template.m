@@ -19,6 +19,7 @@
 
 %-------------------------------------------------------------------------------%
 :- implementation.
+
 :- import_module bool.
 :- import_module char.
 :- import_module getopt_io.
@@ -108,7 +109,7 @@ create_template(ModuleName, AuthorName, DateString, !IO) :-
                                  "     usage(!IO).\n\n",
                                  ":- pred usage(io::di, io::uo) is erroneous.\n",
                                  "usage(!IO) :-\n",
-                                 "    UsageString = \"Usage: ", ModuleName, " <args>\", \n",
+                                 "    UsageString = \"Usage: ", ModuleName, " <args>\\n\", \n",
                                  "    die(UsageString, !IO).\n\n",
                                  ":- pred die(string::in, io::di, io::uo) is erroneous.\n",
                                  "die(Error, !IO) :-\n",
